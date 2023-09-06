@@ -73,7 +73,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
 
   t1.to(whale.position, {
     scrollTrigger: {
-      trigger: ".main",
+      trigger: ".section1",
       start: "top top",
       end: "bottom",
       scrub: 1,
@@ -86,19 +86,33 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
     x: 2.2,
     ease: "out",
   });
-  //       .to(
-  //     "#scene-container",
-  //     {
-  //       scrollTrigger: {
-  //         trigger: ".main",
-  //         start: "top top",
-  //         end: "bottom",
-  //         scrub: 1,
-  //       },
-  //       duration: 10,
-  //     },
-  //     "-=10"
-  //   );
+  t1.to(whale.rotation, {
+    scrollTrigger: {
+      trigger: ".section1",
+      start: "top top",
+      end: "bottom",
+      scrub: 1,
+      onUpdate: (self) => {
+        console.log(self.progress);
+        action.play();
+      },
+    },
+    duration: 10,
+    y: -2.8,
+    ease: "out",
+    onComplete: () => {
+      gsap.to(whale.position, {
+        scrollTrigger: {
+          trigger: ".section1",
+          start: "top top",
+          end: "bottom",
+          scrub: 1,
+        },
+        x: -2.2,
+        ease: "out",
+      });
+    },
+  });
 
   scene.add(whale);
 });
