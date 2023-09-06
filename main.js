@@ -110,6 +110,30 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
         },
         x: -2.2,
         ease: "out",
+        onComplete: () => {
+          gsap.to(whale.rotation, {
+            scrollTrigger: {
+              trigger: ".section1",
+              start: "top top",
+              end: "center",
+              scrub: 1,
+            },
+            y: -1,
+            ease: "out",
+            onComplete: () => {
+              gsap.to(whale.position, {
+                scrollTrigger: {
+                  trigger: ".section1",
+                  start: "top top",
+                  end: "bottom",
+                  scrub: 1,
+                },
+                x: 2.2,
+                ease: "out",
+              });
+            },
+          });
+        },
       });
     },
   });
