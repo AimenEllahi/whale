@@ -1,12 +1,35 @@
-#scene-container {
+body {
+  overflow-x: hidden;
+
+}
+
+#landing-intro,
+#services-wrapper,
+span,
+p,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+
+h6 {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+#scene {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+
   transform-origin: center center;
   transition: transform 0.3s ease;
+  bottom: 40%;
+  z-index: 1 !important;
 }
+
 
 .section1 {
   position: fixed;
