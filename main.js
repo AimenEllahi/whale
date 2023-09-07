@@ -35,22 +35,33 @@ new RGBELoader()
     //scene.background = texture;
   });
 
-const light2 = new THREE.AmbientLight(0xffffff, 0.8, 10);
-light2.position.set(0, 0, 0);
+const light2 = new THREE.AmbientLight("darkblue");
+light2.intensity = 8;
+light2.position.set(0, -2, 0);
 scene.add(light2);
 
-const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.5);
-directionalLight1.position.set(0, 1, 2.5); // Adjust position as needed
+const directionalLight1 = new THREE.DirectionalLight("darkblue", 1);
+directionalLight1.position.set(0, 1, 2.5);
 scene.add(directionalLight1);
+
+//point light
+const pointLight = new THREE.PointLight(0x000000);
+pointLight.intensity = 15;
+pointLight.position.set(0, 0, 0);
+scene.add(pointLight);
+//spot light
+const spotLight = new THREE.SpotLight("blue", 1);
+spotLight.position.set(0, 1, 0);
+scene.add(spotLight);
 
 let mixer, action;
 const gltfLoader = new GLTFLoader();
 gltfLoader.load("./Model/whale.glb", (gltf) => {
   const whale = gltf.scene;
   console.log(whale);
-  whale.scale.set(0.4, 0.4, 0.4);
-  whale.position.set(-2, 0.1, 2);
-  whale.rotation.set(0, -0.8, 0);
+  whale.scale.set(0.5, 0.5, 0.5);
+  whale.position.set(-1.8, 0.1, 2.5);
+  whale.rotation.set(0, -0.5, 0);
   //to load embedded animation in glb file
   mixer = new THREE.AnimationMixer(whale);
 
@@ -68,7 +79,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
 
   t1.to(whale.position, {
     x: 2.3,
-    duration: 7,
+    duration: 15,
     ease: "power1.easeInOut",
 
     //on start
@@ -89,7 +100,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
     },
   })
     .to(whale.position, {
-      x: -3,
+      x: -2.8,
       delay: 3,
       duration: 15,
       //on start
@@ -104,7 +115,20 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
           delay: 1,
           duration: 15,
           z: -1.3,
-          y: -1,
+          y: 2,
+          onComplete: () => {
+            gsap.to(whale.position, {
+              scrollTrigger: {
+                trigger: ".section1",
+                start: "top top",
+                end: "bottom",
+                scrub: 1,
+              },
+              delay: 1,
+              duration: 15,
+              x: 1,
+            });
+          },
         });
       },
     })
@@ -127,9 +151,19 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
       duration: 5,
     })
     .to(whale.position, {
-      x: 14,
-      delay: 3,
-      duration: 10,
+      onComplete: () => {
+        gsap.to(whale.position, {
+          scrollTrigger: {
+            trigger: ".section1",
+            start: "top top",
+            end: "bottom",
+            scrub: 1,
+          },
+
+          duration: 12,
+          x: 14,
+        });
+      },
     })
     .to(whale.rotation, {
       //on start
@@ -142,7 +176,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
             scrub: 1,
           },
           delay: 1,
-          duration: 15,
+          duration: 5,
           z: 0,
           y: -2.8,
         });
@@ -161,6 +195,13 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
     start: "top top",
     end: "+=3200px",
     scrub: 1,
+  });
+  //traverse to add metalness
+  whale.traverse((o) => {
+    if (o.isMesh) {
+      o.material.metalness = 0.6;
+      o.material.roughness = 0.5;
+    }
   });
 
   scene.add(whale);
