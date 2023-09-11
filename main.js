@@ -58,7 +58,7 @@ let mixer, action;
 const gltfLoader = new GLTFLoader();
 gltfLoader.load("./Model/whale.glb", (gltf) => {
   const whale = gltf.scene;
-  whale.scale.set(0.35, 0.35, 0.35);
+  whale.scale.set(0.4, 0.4, 0.4);
   whale.position.set(-1.8, 0.1, 2.5);
   whale.rotation.set(0, -0.5, 0);
   //to load embedded animation in glb file
@@ -147,7 +147,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
     trigger: ".section1",
     animation: t1,
     start: "top top",
-    end: "+=390%",
+    end: "+=3700px",
     scrub: 1,
   });
   //traverse to add metalness
@@ -170,7 +170,7 @@ camera.position.set(0, 0, 5);
 
 function animate() {
   requestAnimationFrame(animate);
-  if (mixer) mixer.update(0.04);
+  if (mixer) mixer.update(0.03);
 
   //   controls.update();
   renderer.render(scene, camera);
