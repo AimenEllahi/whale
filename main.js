@@ -147,7 +147,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
     trigger: ".section1",
     animation: t1,
     start: "top top",
-    end: "+=3700px",
+    end: "+=390%",
     scrub: 1,
   });
   //traverse to add metalness
