@@ -58,8 +58,7 @@ let mixer, action;
 const gltfLoader = new GLTFLoader();
 gltfLoader.load("./Model/whale.glb", (gltf) => {
   const whale = gltf.scene;
-  console.log(whale);
-  whale.scale.set(0.5, 0.5, 0.5);
+  whale.scale.set(0.35, 0.35, 0.35);
   whale.position.set(-1.8, 0.1, 2.5);
   whale.rotation.set(0, -0.5, 0);
   //to load embedded animation in glb file
@@ -79,7 +78,7 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
 
   t1.to(whale.position, {
     x: 2.3,
-    duration: 15,
+    duration: 12,
     ease: "power1.easeInOut",
 
     //on start
@@ -94,106 +93,61 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
         delay: 1,
         ease: "power1.easeInOut",
 
-        duration: 7,
+        duration: 12,
         y: -2.8,
       });
     },
   })
     .to(whale.position, {
-      x: -2.8,
+      x: -10,
       delay: 3,
       duration: 15,
-      //on start
-      onStart: () => {
+      onComplete: () => {
         gsap.to(whale.rotation, {
           scrollTrigger: {
             trigger: ".section1",
             start: "top top",
-            end: "bottom",
+            end: "top",
             scrub: 1,
           },
           delay: 1,
-          duration: 15,
-          z: -1.3,
-          y: 2,
-          onComplete: () => {
-            gsap.to(whale.position, {
-              scrollTrigger: {
-                trigger: ".section1",
-                start: "top top",
-                end: "bottom",
-                scrub: 1,
-              },
-              delay: 1,
-              duration: 15,
-              x: 1,
-            });
-          },
+          y: -0.1,
         });
       },
-    })
-    .to(whale.rotation, {
-      //on start
-      onStart: () => {
-        gsap.to(whale.rotation, {
-          scrollTrigger: {
-            trigger: ".section1",
-            start: "top top",
-            end: "bottom",
-            scrub: 1,
-          },
-          delay: 1,
-          duration: 15,
-          z: 0,
-          y: -0.8,
-        });
-      },
-      duration: 5,
     })
     .to(whale.position, {
-      onComplete: () => {
-        gsap.to(whale.position, {
-          scrollTrigger: {
-            trigger: ".section1",
-            start: "top top",
-            end: "bottom",
-            scrub: 1,
-          },
+      x: 0,
 
-          duration: 12,
-          x: 14,
-        });
-      },
+      duration: 10,
     })
-    .to(whale.rotation, {
-      //on start
-      onStart: () => {
+    .to(whale.position, {
+      x: 10,
+      duration: 10,
+      onComplete: () => {
         gsap.to(whale.rotation, {
           scrollTrigger: {
             trigger: ".section1",
             start: "top top",
-            end: "bottom",
+            end: "top",
             scrub: 1,
           },
           delay: 1,
-          duration: 5,
-          z: 0,
           y: -2.8,
         });
       },
-      duration: 5,
     })
+
     .to(whale.position, {
-      x: 2.2,
+      x: -12,
       delay: 6,
-      duration: 10,
+      duration: 16,
     });
 
   ScrollTrigger.create({
     trigger: ".section1",
     animation: t1,
     start: "top top",
-    end: "+=3200px",
+    end: "+=3700px",
     scrub: 1,
   });
   //traverse to add metalness
@@ -216,7 +170,7 @@ camera.position.set(0, 0, 5);
 
 function animate() {
   requestAnimationFrame(animate);
-  if (mixer) mixer.update(0.02);
+  if (mixer) mixer.update(0.04);
 
   //   controls.update();
   renderer.render(scene, camera);

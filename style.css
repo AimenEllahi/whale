@@ -1,9 +1,13 @@
 body {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 #landing-intro,
 #services-wrapper,
+.item-2,
+.item-1,
+.more-links-wrapper,
 span,
 p,
 a,
