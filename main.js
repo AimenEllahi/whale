@@ -35,6 +35,11 @@ new RGBELoader()
     //scene.background = texture;
   });
 
+const whaleLight = new THREE.DirectionalLight("darkblue");
+whaleLight.intensity = 15;
+whaleLight.position.set(-1.8, 0.1, 2.5);
+scene.add(whaleLight);
+
 const light2 = new THREE.AmbientLight("darkblue");
 light2.intensity = 8;
 light2.position.set(0, -2, 0);
@@ -96,6 +101,12 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
         duration: 12,
         y: -2.8,
       });
+      whaleLight.color.set("blue");
+      whaleLight.position.set(-1.8, 0.1, 2.5);
+    },
+    onComplete: () => {
+      whaleLight.color.set("darkblue");
+      whaleLight.position.set(1.8, 0.1, 2.5);
     },
   })
     .to(whale.position, {
@@ -113,16 +124,16 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
           delay: 1,
           y: -0.1,
         });
+        whaleLight.color.set("blue");
       },
     })
     .to(whale.position, {
       x: 0,
-
       duration: 10,
     })
     .to(whale.position, {
       x: 10,
-      duration: 10,
+      duration: 20,
       onComplete: () => {
         gsap.to(whale.rotation, {
           scrollTrigger: {
@@ -134,13 +145,16 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
           delay: 1,
           y: -2.8,
         });
+        whaleLight.color.set("darkblue");
       },
     })
-
     .to(whale.position, {
       x: -12,
       delay: 6,
-      duration: 16,
+      duration: 20,
+      onStart: () => {
+        whaleLight.color.set("blue");
+      },
     });
 
   ScrollTrigger.create({
@@ -149,6 +163,9 @@ gltfLoader.load("./Model/whale.glb", (gltf) => {
     start: "top top",
     end: "+=3700px",
     scrub: 1,
+    onUpdate: () => {
+      mixer.update(0.01);
+    },
   });
   //traverse to add metalness
   whale.traverse((o) => {
@@ -170,7 +187,7 @@ camera.position.set(0, 0, 5);
 
 function animate() {
   requestAnimationFrame(animate);
-  if (mixer) mixer.update(0.03);
+  if (mixer) mixer.update(0.04);
 
   //   controls.update();
   renderer.render(scene, camera);
