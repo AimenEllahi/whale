@@ -69,12 +69,73 @@
 
     <link href="https://markcon.mcp.hu/hu" rel="canonical" />
 
+
+    <style>
+      body {
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+
+      #landing-intro,
+      #services-wrapper,
+      .item-2,
+      .item-1,
+      .more-links-wrapper,
+      span,
+      p,
+      a,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        position: relative !important;
+        z-index: 10 !important;
+      }
+
+      #scene {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        transform-origin: center center;
+        transition: transform 0.3s ease;
+        bottom: 40%;
+        z-index: 1 !important;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 2 !important;
+
+        /* blue and black gradient */
+        background: linear-gradient(170deg,
+            rgba(0, 0, 0, 0.8) 50%,
+            rgba(13, 6, 70, 0.8) 100%);
+        opacity: 0.7;
+      }
+
+      .section1 {
+        position: fixed;
+        height: 100vh;
+      }
+
+      .section2 {
+        position: fixed;
+        height: 120vh;
+      }
+    </style>
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="9hHH6d303dUjwiy5SdpCiKeeTFOarBVdDMaakDAS" />
 
     <!-- Styles -->
     <link href="https://markcon.mcp.hu/css/app.css?id=0e552052db7ae2c367e9483d2653090e" rel="stylesheet" />
-    <link rel="stylesheet" href="./style.css" />
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 
     <script type="importmap">
@@ -476,13 +537,221 @@
         );
       });
     </script>
+    <script type='module'>
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+      import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 
+      gsap.registerPlugin(ScrollTrigger);
+      let t1 = gsap.timeline({
+        default: { ease: "power1.easeInOut" },
+      });
+      const canvas = document.getElementById("scene");
+      document.body.appendChild(canvas);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+
+      //load renderer
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        canvas,
+        alpha: true,
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      // Loads environment map
+
+      new RGBELoader()
+        .setPath("./Assets/")
+        .load("photo_studio_01_1k.hdr", function (texture) {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          scene.environment = texture;
+          //scene.background = texture;
+        });
+
+      const whaleLight = new THREE.DirectionalLight("blue");
+      whaleLight.intensity = 15;
+      //increase radius 
+      whaleLight.distance = 100;
+
+      whaleLight.position.set(-1.8, 0.1, 2.5);
+      scene.add(whaleLight);
+
+      const light2 = new THREE.AmbientLight("darkblue");
+      light2.intensity = 8;
+      light2.position.set(0, -2, 0);
+      scene.add(light2);
+
+      const directionalLight1 = new THREE.DirectionalLight("darkblue", 1);
+      directionalLight1.position.set(0, 1, 2.5);
+      scene.add(directionalLight1);
+
+      //point light
+      const pointLight = new THREE.PointLight(0x000000);
+      pointLight.intensity = 15;
+      pointLight.position.set(0, 0, 0);
+      scene.add(pointLight);
+      //spot light
+      const spotLight = new THREE.SpotLight("blue", 1);
+      spotLight.position.set(0, 1, 0);
+      scene.add(spotLight);
+
+      let mixer, action;
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.load("./Model/whale.glb", (gltf) => {
+        const whale = gltf.scene;
+        whale.scale.set(0.4, 0.4, 0.4);
+        whale.position.set(-1.8, 0.1, 2.5);
+        whale.rotation.set(0, -0.5, 0);
+        whaleLight.lookAt(...whale.position)
+        //to load embedded animation in glb file
+        mixer = new THREE.AnimationMixer(whale);
+
+        const whaleClip = THREE.AnimationUtils.subclip(
+          gltf.animations[0],
+          "Walk",
+          50,
+          290
+        );
+
+        action = mixer.clipAction(whaleClip);
+
+        action.setLoop(THREE.LoopPingPong);
+        action.play();
+
+        t1.to(whale.position, {
+          x: 2.3,
+          duration: 12,
+          ease: "power1.easeInOut",
+
+          //on start
+          onStart: () => {
+            gsap.to(whale.rotation, {
+              scrollTrigger: {
+                trigger: ".section1",
+                start: "top top",
+                end: "bottom",
+                scrub: 1,
+              },
+              delay: 1,
+              ease: "power1.easeInOut",
+
+              duration: 12,
+              y: -2.8,
+            });
+          },
+
+        })
+          .to(whale.position, {
+            x: -10,
+            delay: 3,
+            duration: 15,
+            onComplete: () => {
+              gsap.to(whale.rotation, {
+                scrollTrigger: {
+                  trigger: ".section1",
+                  start: "top top",
+                  end: "top",
+                  scrub: 1,
+                },
+                delay: 1,
+                y: -0.1,
+              });
+
+            },
+          })
+          .to(whale.position, {
+            x: 0,
+            duration: 10,
+
+          })
+          .to(whale.position, {
+            x: 10,
+            duration: 20,
+            onComplete: () => {
+              gsap.to(whale.rotation, {
+                scrollTrigger: {
+                  trigger: ".section1",
+                  start: "top top",
+                  end: "top",
+                  scrub: 1,
+                },
+                delay: 1,
+                y: -2.8,
+              });
+
+            },
+          })
+          .to(whale.position, {
+            x: -12,
+            delay: 6,
+            duration: 20,
+
+          });
+
+        ScrollTrigger.create({
+          trigger: ".section1",
+          animation: t1,
+          start: "top top",
+          end: "+=3700px",
+          scrub: 1,
+          onUpdate: (self) => {
+            mixer.update(0.08);
+            //get scroll progress
+            let scrollProgress = self.progress;
+
+            if (scrollProgress > 0 && scrollProgress <= .17) {
+              whaleLight.color.set("blue");
+            } else if (scrollProgress > .17 && scrollProgress <= .4) {
+              whaleLight.color.set("#D80032");
+            } else if (scrollProgress > .4 && scrollProgress <= .6) {
+              whaleLight.color.set("#9400FF");
+            } else if (scrollProgress > .6 && scrollProgress <= .8) {
+              whaleLight.color.set("#A6FF96");
+            } else {
+              whaleLight.color.set("#45FFCA");
+            }
+
+
+          },
+        });
+        //traverse to add metalness
+        whale.traverse((o) => {
+          if (o.isMesh) {
+            o.material.metalness = 0.8;
+            o.material.roughness = 0.5;
+          }
+        });
+
+        scene.add(whale);
+      });
+
+      camera.position.set(0, 0, 5);
+
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+
+        //   controls.update();
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+    </script>
     <!-- background -->
     <div class="Overlay"></div>
 
     <!-- Betöltésjelző -->
     <div id="progress"></div>
-    <script type="module" src="./main.js"></script>
   </body>
 
 </html>
